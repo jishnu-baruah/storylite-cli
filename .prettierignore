@@ -1,0 +1,10 @@
+dist/
+node_modules/
+coverage/
+*.md
+*.json
+*.cjs
+*.js
+.eslintrc.json
+jest.config.cjs
+package-lock.json
