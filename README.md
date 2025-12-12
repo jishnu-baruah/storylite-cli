@@ -249,7 +249,7 @@ CMD ["storylite", "mint", "./dist/app.js"]
 
 ```bash
 # Clone the repository
-git clone https://github.com/story-protocol/storylite-cli.git
+git clone https://github.com/jishnu-baruah/storylite-cli.git
 cd storylite-cli
 
 # Install dependencies
@@ -383,7 +383,7 @@ MIT License - see [LICENSE](LICENSE) file for details.
 ## 🌟 Support & Community
 
 - **📚 Documentation:** [docs.story.foundation](https://docs.story.foundation)
-- **🐛 Issues:** [GitHub Issues](https://github.com/story-protocol/storylite-cli/issues)
+- **🐛 Issues:** [GitHub Issues](https://github.com/jishnu-baruah/storylite-cli/issues)
 - **💬 Community:** [Discord](https://discord.gg/storyprotocol)
 - **🐦 Updates:** [Twitter](https://twitter.com/storyprotocol)
 
