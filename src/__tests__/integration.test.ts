@@ -219,7 +219,7 @@ describe('Complete Minting Workflow Integration', () => {
     });
 
     it('should validate Ethereum addresses correctly', async () => {
-      const mintRequest = await apiClient.readFile(testFile);
+      await apiClient.readFile(testFile);
 
       // Valid Ethereum address
       const validAddress = '0x742d35Cc6634C0532925a3b8D404d3aABb8c4532';
