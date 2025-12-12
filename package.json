@@ -1,6 +1,6 @@
 {
     "name": "storylite-cli",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "The cURL for Intellectual Property - Transform any file into a registered IP asset with one command",
     "type": "module",
     "main": "dist/index.js",
