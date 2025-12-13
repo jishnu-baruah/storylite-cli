@@ -151,6 +151,20 @@ export class APIClient {
       };
 
       if (this.config.verbose) {
+        console.log('Request payload:', {
+          userAddress: payload.userAddress,
+          filePath: payload.filePath,
+          filename: payload.filename,
+          contentType: payload.contentType,
+          title: payload.title,
+          description: payload.description,
+          generateMetadata: payload.generateMetadata,
+          fileDataLength: payload.fileData.length,
+          hasMetadata: !!mintRequest.metadata
+        });
+      }
+
+      if (this.config.verbose) {
         console.log(
           `Uploading file: ${mintRequest.filename} (${this.formatFileSize(mintRequest.file.length)})`
         );
@@ -160,14 +174,14 @@ export class APIClient {
       const config =
         mintRequest.file.length > 5 * 1024 * 1024
           ? {
-              // 5MB threshold
-              onUploadProgress: (progressEvent: any) => {
-                if (this.config.verbose && progressEvent.total) {
-                  const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
-                  process.stdout.write(`\rUploading: ${progress}%`);
-                }
-              },
-            }
+            // 5MB threshold
+            onUploadProgress: (progressEvent: any) => {
+              if (this.config.verbose && progressEvent.total) {
+                const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+                process.stdout.write(`\rUploading: ${progress}%`);
+              }
+            },
+          }
           : {};
 
       const response: AxiosResponse = await this.client.post('/api/cli/mint-file', payload, config);
@@ -290,6 +304,14 @@ export class APIClient {
         case 429:
           return new APIError('Rate limit exceeded', status, 'Wait a moment before trying again');
         case 500:
+          if (this.config.verbose) {
+            console.log('Server error details:', {
+              status: error.response.status,
+              statusText: error.response.statusText,
+              data: error.response.data,
+              headers: error.response.headers
+            });
+          }
           return new APIError(
             'Server error',
             status,

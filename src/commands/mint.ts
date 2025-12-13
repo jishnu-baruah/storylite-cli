@@ -229,20 +229,20 @@ ${chalk.yellow.bold('TROUBLESHOOTING:')}
             // Sign with provided private key
             signedTx = await transactionSigner.signForDevelopment(
               {
-                to: result.transactionHash || '', // API returns transaction data in these fields
-                data: result.ipAssetId || '0x',
-                value: '0',
-                gasEstimate: result.ipfsHash || '500000',
+                to: result.transactionData?.to || '',
+                data: result.transactionData?.data || '0x',
+                value: result.transactionData?.value || '0',
+                gasEstimate: result.transactionData?.gasEstimate || 500000,
               },
               options.privateKey
             );
           } else if (process.env.STORYLITE_PRIVATE_KEY) {
             // Sign with environment variable (CI/CD)
             signedTx = await transactionSigner.signForCICD({
-              to: result.transactionHash || '',
-              data: result.ipAssetId || '0x',
-              value: '0',
-              gasEstimate: result.ipfsHash || '500000',
+              to: result.transactionData?.to || '',
+              data: result.transactionData?.data || '0x',
+              value: result.transactionData?.value || '0',
+              gasEstimate: result.transactionData?.gasEstimate || 500000,
             });
           } else {
             // No signing method available

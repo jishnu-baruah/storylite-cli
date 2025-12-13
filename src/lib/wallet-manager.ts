@@ -13,7 +13,7 @@ export interface TransactionRequest {
   to: string;
   data: string;
   value: string;
-  gasEstimate: string;
+  gasEstimate: number;
 }
 
 export interface SignedTransaction {
@@ -147,23 +147,38 @@ export class WalletManager {
     }
 
     try {
-      // For demo purposes, simulate a successful transaction
-      // In production, this would actually sign and send the transaction
-      const mockHash = `0x${Math.random().toString(16).substring(2, 66)}`;
-
-      console.log(`🔐 Simulating transaction signing...`);
+      console.log(`🔐 Signing and sending transaction...`);
       console.log(`   To: ${txRequest.to}`);
       console.log(`   Data: ${txRequest.data.substring(0, 20)}...`);
-      console.log(`   Gas: ${txRequest.gasEstimate}`);
+      console.log(`   Gas Estimate: ${txRequest.gasEstimate}`);
 
-      // Simulate network delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Use provided gas estimate or estimate gas for the transaction
+      let gasEstimate: bigint;
+      try {
+        gasEstimate = await this.estimateGas(txRequest);
+      } catch (error) {
+        // Fall back to provided estimate if gas estimation fails
+        gasEstimate = BigInt(txRequest.gasEstimate);
+      }
+
+      // Sign and send the transaction
+      const hash = await this.walletClient.sendTransaction({
+        account: this.account,
+        to: txRequest.to as `0x${string}`,
+        data: txRequest.data as `0x${string}`,
+        value: BigInt(txRequest.value),
+        gas: gasEstimate,
+        chain: this.walletClient.chain,
+      });
+
+      console.log(`✅ Transaction sent: ${hash}`);
 
       return {
-        hash: mockHash,
+        hash,
         success: true,
       };
     } catch (error) {
+      console.error(`❌ Transaction failed:`, error);
       return {
         hash: '',
         success: false,
