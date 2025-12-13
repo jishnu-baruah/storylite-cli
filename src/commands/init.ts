@@ -74,7 +74,7 @@ ${chalk.yellow.bold('NEED HELP?')}
 
         if (!endpoint) {
           if (options.yes) {
-            endpoint = 'https://universal-minting-engine.vercel.app';
+            endpoint = 'https://surreal-base.vercel.app';
             console.log(chalk.cyan('📡 Using default endpoint:'), chalk.white(endpoint));
           } else {
             console.log(chalk.yellow.bold('Step 1: API Endpoint'));
@@ -83,7 +83,7 @@ ${chalk.yellow.bold('NEED HELP?')}
             console.log(
               chalk.cyan('1.') +
                 ' Official (recommended): ' +
-                chalk.white('https://universal-minting-engine.vercel.app')
+                chalk.white('https://surreal-base.vercel.app')
             );
             console.log(
               chalk.cyan('2.') + ' Local development: ' + chalk.white('http://localhost:3000')
@@ -94,7 +94,7 @@ ${chalk.yellow.bold('NEED HELP?')}
 
             // For now, we'll use the default since we don't have interactive prompts
             // In a real implementation, you'd use a library like 'inquirer' for interactive prompts
-            endpoint = 'https://universal-minting-engine.vercel.app';
+            endpoint = 'https://surreal-base.vercel.app';
             console.log(
               chalk.gray(
                 '\n💡 Using default endpoint for demo. In production, this would be interactive.'

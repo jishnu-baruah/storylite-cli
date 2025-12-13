@@ -11,7 +11,7 @@ export interface CLIConfig {
 export class ConfigManager {
   private config: Conf<CLIConfig>;
   private readonly defaultConfig: CLIConfig = {
-    endpoint: 'https://universal-minting-engine.vercel.app',
+    endpoint: 'https://surreal-base.vercel.app',
     verbose: false,
     timeout: 30000,
   };

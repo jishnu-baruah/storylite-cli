@@ -30,7 +30,7 @@ npm install -g storylite-cli
 
 ```bash
 # 1. Set your API endpoint
-storylite config set-endpoint https://universal-minting-engine.vercel.app
+storylite config set-endpoint https://surreal-base.vercel.app
 
 # 2. Set your wallet address (one time only!)
 storylite config set-address 0x742d35Cc6634C0532925a3b8D404d3aABb8c4532
@@ -133,7 +133,7 @@ storylite mint ./file1.txt && storylite mint ./file2.jpg && storylite mint ./fil
 storylite --help
 
 # Set your API endpoint (required)
-storylite config set-endpoint https://universal-minting-engine.vercel.app
+storylite config set-endpoint https://surreal-base.vercel.app
 
 # Set your default wallet address (required)
 storylite config set-address 0x742d35Cc6634C0532925a3b8D404d3aABb8c4532
@@ -304,7 +304,7 @@ storylite config set-address 0x742d35Cc6634C0532925a3b8D404d3aABb8c4532
 **Solutions:**
 1. Check your internet connection
 2. Verify the endpoint URL: `storylite config show`
-3. Try the default endpoint: `storylite config set-endpoint https://universal-minting-engine.vercel.app`
+3. Try the default endpoint: `storylite config set-endpoint https://surreal-base.vercel.app`
 
 </details>
 
