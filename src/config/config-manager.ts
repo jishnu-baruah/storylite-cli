@@ -44,9 +44,16 @@ export class ConfigManager {
   }
 
   /**
-   * Get configuration value by key
+   * Get configuration value by key with environment variable override
    */
   get<K extends keyof CLIConfig>(key: K): CLIConfig[K] {
+    // Check for environment variable overrides
+    if (key === 'endpoint' && process.env.STORYLITE_ENDPOINT) {
+      return process.env.STORYLITE_ENDPOINT as CLIConfig[K];
+    }
+    if (key === 'verbose' && process.env.STORYLITE_VERBOSE) {
+      return (process.env.STORYLITE_VERBOSE === 'true') as CLIConfig[K];
+    }
     return this.config.get(key);
   }
 
@@ -139,6 +146,20 @@ export class ConfigManager {
   }
 
   /**
+   * Get private key from environment variable
+   */
+  getPrivateKey(): string | undefined {
+    return process.env.STORYLITE_PRIVATE_KEY;
+  }
+
+  /**
+   * Check if private key is available in environment
+   */
+  hasPrivateKey(): boolean {
+    return !!process.env.STORYLITE_PRIVATE_KEY;
+  }
+
+  /**
    * Get configuration for display (with sensitive data masked)
    */
   getDisplayConfig(): Record<string, string> {
@@ -149,6 +170,7 @@ export class ConfigManager {
       address: config.address ? this.maskAddress(config.address) : 'Not set',
       verbose: config.verbose.toString(),
       timeout: `${config.timeout}ms`,
+      privateKey: this.hasPrivateKey() ? 'Set in environment' : 'Not set',
     };
   }
 

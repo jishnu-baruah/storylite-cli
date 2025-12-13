@@ -48,7 +48,7 @@ ${chalk.yellow.bold('AFTER SETUP:')}
   ${chalk.gray('# No more configuration needed!')}
 
 ${chalk.yellow.bold('COMMON ENDPOINTS:')}
-  ${chalk.cyan('Official:')} https://universal-minting-engine.vercel.app
+  ${chalk.cyan('Surreal Base:')} https://surreal-base.vercel.app
   ${chalk.cyan('Local:')} http://localhost:3000
   ${chalk.cyan('Custom:')} Your own deployment URL
 
@@ -82,8 +82,8 @@ ${chalk.yellow.bold('NEED HELP?')}
 
             console.log(
               chalk.cyan('1.') +
-                ' Official (recommended): ' +
-                chalk.white('https://surreal-base.vercel.app')
+              ' Surreal Base (recommended): ' +
+              chalk.white('https://surreal-base.vercel.app')
             );
             console.log(
               chalk.cyan('2.') + ' Local development: ' + chalk.white('http://localhost:3000')
@@ -97,7 +97,7 @@ ${chalk.yellow.bold('NEED HELP?')}
             endpoint = 'https://surreal-base.vercel.app';
             console.log(
               chalk.gray(
-                '\n💡 Using default endpoint for demo. In production, this would be interactive.'
+                '\n💡 Using default endpoint. Run without --yes for interactive setup (coming soon).'
               )
             );
           }
@@ -184,8 +184,49 @@ ${chalk.yellow.bold('NEED HELP?')}
           }
         }
 
-        // Step 4: Success summary
-        console.log(chalk.green.bold('\n🎉 Setup Complete!\n'));
+        // Step 4: Environment Variables Setup
+        console.log(chalk.yellow.bold('\nStep 4: Environment Variables (Optional)'));
+        console.log(chalk.gray('Set up environment variables for easier usage:\n'));
+
+        console.log(chalk.cyan('🔐 For Private Key (Secure Transaction Signing):'));
+        console.log(chalk.white('   export STORYLITE_PRIVATE_KEY=0x...'));
+        console.log(chalk.gray('   • Enables --interactive mode'));
+        console.log(chalk.gray('   • No need to pass --private-key every time'));
+        console.log(chalk.gray('   • More secure than command line arguments\n'));
+
+        console.log(chalk.cyan('🌐 For Custom Endpoint (Optional):'));
+        console.log(chalk.white('   export STORYLITE_ENDPOINT=https://your-api.com'));
+        console.log(chalk.gray('   • Override default endpoint globally'));
+        console.log(chalk.gray('   • Useful for custom deployments\n'));
+
+        console.log(chalk.cyan('📝 For Verbose Logging (Optional):'));
+        console.log(chalk.white('   export STORYLITE_VERBOSE=true'));
+        console.log(chalk.gray('   • Enable detailed logging by default'));
+        console.log(chalk.gray('   • Helpful for debugging\n'));
+
+        // Check current environment variables
+        const envStatus = {
+          privateKey: !!process.env.STORYLITE_PRIVATE_KEY,
+          endpoint: !!process.env.STORYLITE_ENDPOINT,
+          verbose: !!process.env.STORYLITE_VERBOSE
+        };
+
+        if (envStatus.privateKey || envStatus.endpoint || envStatus.verbose) {
+          console.log(chalk.green('✅ Current Environment Variables:'));
+          if (envStatus.privateKey) {
+            console.log(chalk.gray('   ✓ STORYLITE_PRIVATE_KEY is set'));
+          }
+          if (envStatus.endpoint) {
+            console.log(chalk.gray(`   ✓ STORYLITE_ENDPOINT=${process.env.STORYLITE_ENDPOINT}`));
+          }
+          if (envStatus.verbose) {
+            console.log(chalk.gray('   ✓ STORYLITE_VERBOSE=true'));
+          }
+          console.log('');
+        }
+
+        // Step 5: Success summary
+        console.log(chalk.green.bold('🎉 Setup Complete!\n'));
 
         const config = configManager.getDisplayConfig();
         console.log(chalk.cyan('📋 Your Configuration:'));
@@ -194,7 +235,15 @@ ${chalk.yellow.bold('NEED HELP?')}
 
         console.log(chalk.yellow.bold('\n🚀 Ready to Mint!'));
         console.log(chalk.gray('Try minting your first file:'));
-        console.log(chalk.white('   storylite mint ./my-file.txt\n'));
+
+        if (envStatus.privateKey) {
+          console.log(chalk.white('   storylite mint ./my-file.txt --interactive'));
+          console.log(chalk.gray('   # Uses stored private key with confirmation'));
+        } else {
+          console.log(chalk.white('   storylite mint ./my-file.txt --private-key 0x...'));
+          console.log(chalk.gray('   # Or set STORYLITE_PRIVATE_KEY and use --interactive'));
+        }
+        console.log('');
 
         console.log(chalk.cyan('💡 Pro Tips:'));
         console.log(chalk.gray('• Use --title and --description for custom metadata'));

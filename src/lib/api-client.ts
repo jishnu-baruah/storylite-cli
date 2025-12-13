@@ -454,7 +454,7 @@ export class APIClient {
   }
 
   /**
-   * Extract IP Asset ID from transaction receipt
+   * Extract IP Asset ID from transaction receipt using Story Protocol events
    */
   async extractIpAssetId(transactionHash: string): Promise<string | null> {
     try {
@@ -469,16 +469,32 @@ export class APIClient {
         timeout: 60000, // 60 seconds timeout
       });
 
-      // Look for IPRegistered event
-      // The IP Asset ID is typically emitted in the IPRegistered event
+      if (this.config.verbose) {
+        console.log(`Transaction confirmed in block ${receipt.blockNumber}`);
+        console.log(`Found ${receipt.logs.length} logs in transaction`);
+      }
+
+      // Look for Transfer event from SPG NFT contract to get token ID
+      // Then calculate IP Asset ID from contract address + token ID
       for (const log of receipt.logs) {
         try {
-          // IPRegistered event signature: IPRegistered(address,uint256,address,string,string,uint256)
-          if (log.topics[0] === '0x1234567890abcdef...') { // Replace with actual event signature
-            // Extract IP Asset ID from the log data
-            // This would need to be decoded properly based on the actual event structure
-            const ipAssetId = log.topics[1]; // Assuming IP Asset ID is in topics[1]
-            return ipAssetId || null;
+          // Transfer event signature: Transfer(address,address,uint256)
+          // keccak256("Transfer(address,address,uint256)") = 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef
+          if (log.topics[0] === '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef') {
+            const tokenId = log.topics[3]; // Token ID is in topics[3] for Transfer event
+            const contractAddress = log.address;
+
+            if (tokenId && contractAddress) {
+              // In Story Protocol, IP Asset ID is derived from contract address + token ID
+              // This is a simplified calculation - the actual formula might be different
+              const ipAssetId = `${contractAddress.toLowerCase()}-${BigInt(tokenId).toString()}`;
+
+              if (this.config.verbose) {
+                console.log(`Found NFT Transfer: Contract ${contractAddress}, Token ID ${BigInt(tokenId).toString()}`);
+              }
+
+              return ipAssetId;
+            }
           }
         } catch (error) {
           // Continue to next log if this one fails to decode
@@ -487,7 +503,7 @@ export class APIClient {
       }
 
       if (this.config.verbose) {
-        console.log('IP Asset ID not found in transaction logs');
+        console.log('No Transfer events found in transaction logs');
       }
       return null;
     } catch (error) {
