@@ -24,6 +24,12 @@ export interface MintResult {
   ipAssetId?: string;
   ipfsHash?: string;
   error?: string;
+  transactionData?: {
+    to?: string;
+    data?: string;
+    value?: string;
+    gasEstimate?: number;
+  };
 }
 
 export interface CLIConfig {

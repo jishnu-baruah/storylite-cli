@@ -204,9 +204,12 @@ ${chalk.yellow.bold('TROUBLESHOOTING:')}
           progress.succeed('✓ Transaction prepared successfully (dry run)');
 
           console.log(chalk.cyan('\n📋 Transaction Details:'));
-          console.log(chalk.gray(`   To: ${result.transactionHash}`)); // This is actually the 'to' address
-          console.log(chalk.gray(`   Gas Estimate: ${result.ipfsHash || 'Unknown'}`)); // This is actually gas estimate
-          console.log(chalk.gray(`   Data: ${result.ipAssetId || '0x'}`)); // This is actually transaction data
+          console.log(chalk.gray(`   To: ${result.transactionData?.to || 'Unknown'}`));
+          console.log(
+            chalk.gray(`   Gas Estimate: ${result.transactionData?.gasEstimate || 'Unknown'}`)
+          );
+          console.log(chalk.gray(`   Data: ${result.transactionData?.data || '0x'}`));
+          console.log(chalk.gray(`   IPFS Hash: ${result.ipfsHash || 'Unknown'}`));
 
           console.log(chalk.yellow('\n💡 This was a dry run. To actually mint:'));
           console.log(

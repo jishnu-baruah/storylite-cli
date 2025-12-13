@@ -191,6 +191,8 @@ export class APIClient {
         ipAssetId: response.data.additionalData?.ipAssetId,
         ipfsHash: response.data.metadata?.ipfsHash,
         error: undefined,
+        // Store transaction data for display
+        transactionData: response.data.transaction,
       };
 
       if (this.config.verbose) {
