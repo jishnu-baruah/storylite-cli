@@ -39,7 +39,7 @@ npm install -g storylite-cli
 
 ```bash
 # 1. Interactive setup wizard (recommended)
-storylite init --address 0x742d35Cc6634C0532925a3b8D404d3aABb8c4532 --yes
+storylite init --address 0xYOUR_WALLET_ADDRESS --yes
 
 # 2. Set up secure environment (optional but recommended)
 export STORYLITE_PRIVATE_KEY=0x...
@@ -88,7 +88,7 @@ storylite mint ./beat.mp3 --interactive --title "Lo-Fi Summer Vibes"
 storylite mint ./demo.mp4 --interactive --title "Product Demo Video"
 
 # 🆔 Get real IP Asset ID (NEW in v1.0.10)
-# Output includes: IP Asset ID: 0xc32a8a0ff3beddda58393d022af433e78739fabc-3929
+# Output includes: IP Asset ID: 0xIP_ASSET_ADDRESS-TOKEN_ID
 ```
 
 ### Advanced Usage
@@ -166,7 +166,7 @@ storylite mint ./file1.txt --interactive && storylite mint ./file2.jpg --interac
 
 ```bash
 # One command setup - guides you through everything
-storylite init --address 0x742d35Cc6634C0532925a3b8D404d3aABb8c4532 --yes
+storylite init --address 0xYOUR_WALLET_ADDRESS --yes
 
 # Set up secure environment (optional but recommended)
 export STORYLITE_PRIVATE_KEY=0x...
@@ -185,7 +185,7 @@ storylite --help
 storylite config set-endpoint https://surreal-base.vercel.app
 
 # Set your default wallet address (required)
-storylite config set-address 0x742d35Cc6634C0532925a3b8D404d3aABb8c4532
+storylite config set-address 0xYOUR_WALLET_ADDRESS
 
 # Optional: Set API key if your endpoint requires it
 storylite config set-key your-api-key-here
@@ -206,7 +206,7 @@ storylite config show
 
 ```bash
 # 🔐 Private Key (Enables interactive mode)
-export STORYLITE_PRIVATE_KEY=0x2d0b3c7d8cf92649839f607e42d3bc23fd28d7cb0739fa4cba74b3b4d2c50550
+export STORYLITE_PRIVATE_KEY=0xYOUR_PRIVATE_KEY
 
 # 🌐 Custom Endpoint Override
 export STORYLITE_ENDPOINT=https://your-custom-api.com
@@ -233,7 +233,7 @@ storylite mint ./file.txt --interactive
 
 # Shows transaction details and asks for confirmation:
 # 📋 Transaction Details:
-#    To: 0xbe39E1C756e921BD25DF86e7AAa31106d1eb0424
+#    To: 0xCONTRACT_ADDRESS
 #    Data: 0xf1c42a22...
 #    Gas Estimate: 1137427
 # ❓ Do you want to sign and send this transaction? (y/N): y
@@ -286,10 +286,10 @@ storylite mint ./myfile.txt --interactive --title "My IP Asset"
 
 # Output includes real blockchain identifiers:
 ✓ IP Asset created successfully!
-🔗 Transaction Hash: 0xc4578e2bf3fb90dafdb1443f3c47c2889920f9dfa21d871d209cdda3a74712a5
-🆔 IP Asset ID: 0xc32a8a0ff3beddda58393d022af433e78739fabc-3929
-📦 IPFS Hash: QmZM3KmPAYssc4TihpGTNS1zaZkk9sGm1tbjLh3m5XksgY
-🔍 View on explorer: https://aeneid.storyscan.io/tx/0x...
+🔗 Transaction Hash: 0xTRANSACTION_HASH
+🆔 IP Asset ID: 0xIP_ASSET_ADDRESS-TOKEN_ID
+📦 IPFS Hash: QmIPFS_HASH
+🔍 View on explorer: https://aeneid.storyscan.io/tx/0xTRANSACTION_HASH
 ```
 
 **What you get:**
@@ -390,7 +390,7 @@ npm run package:local
 
 **Solution:** Set your default address first
 ```bash
-storylite config set-address 0x742d35Cc6634C0532925a3b8D404d3aABb8c4532
+storylite config set-address 0xYOUR_WALLET_ADDRESS
 ```
 
 </details>
@@ -421,10 +421,10 @@ storylite config set-address 0x742d35Cc6634C0532925a3b8D404d3aABb8c4532
 **Solution:** Ensure address is 42 characters starting with 0x
 ```bash
 # ✅ Correct format
-storylite config set-address 0x742d35Cc6634C0532925a3b8D404d3aABb8c4532
+storylite config set-address 0xYOUR_WALLET_ADDRESS
 
 # ❌ Wrong format
-storylite config set-address 742d35Cc6634C0532925a3b8D404d3aABb8c4532
+storylite config set-address YOUR_WALLET_ADDRESS
 ```
 
 </details>
