@@ -137,30 +137,48 @@ export class APIClient {
       // Validate inputs
       this.validateMintRequest(mintRequest, userAddress);
 
-      // Prepare request payload for the CLI endpoint
+      // Prepare request payload for the prepare-mint endpoint (same as web demo)
       const payload = {
         userAddress,
-        filePath: mintRequest.filename, // Use filename as path reference
-        fileData: mintRequest.file.toString('base64'),
-        filename: mintRequest.filename,
-        contentType: this.detectContentType(mintRequest.filename),
-        title: mintRequest.title,
-        description: mintRequest.description,
-        generateMetadata: true,
+        ipMetadata: {
+          title: mintRequest.title || mintRequest.filename,
+          description: mintRequest.description || `IP asset for ${mintRequest.filename}`,
+          creators: [{
+            name: `User-${userAddress.slice(2, 8)}...${userAddress.slice(-4)}`,
+            address: userAddress,
+            contributionPercent: 100
+          }],
+          createdAt: new Date().toISOString(),
+          mediaType: this.detectContentType(mintRequest.filename)
+        },
+        nftMetadata: {
+          name: mintRequest.title || mintRequest.filename,
+          description: mintRequest.description || `NFT for ${mintRequest.filename}`,
+          attributes: [
+            { key: 'File Name', value: mintRequest.filename },
+            { key: 'File Size', value: this.formatFileSize(mintRequest.file.length) },
+            { key: 'Content Type', value: this.detectContentType(mintRequest.filename) }
+          ]
+        },
+        // Note: File upload temporarily disabled - API may not have IPFS configured
+        // files: [{
+        //   data: mintRequest.file.toString('base64'),
+        //   filename: mintRequest.filename,
+        //   contentType: this.detectContentType(mintRequest.filename),
+        //   purpose: 'media'
+        // }],
         ...mintRequest.metadata,
       };
 
       if (this.config.verbose) {
         console.log('Request payload:', {
           userAddress: payload.userAddress,
-          filePath: payload.filePath,
-          filename: payload.filename,
-          contentType: payload.contentType,
-          title: payload.title,
-          description: payload.description,
-          generateMetadata: payload.generateMetadata,
-          fileDataLength: payload.fileData.length,
-          hasMetadata: !!mintRequest.metadata
+          ipTitle: payload.ipMetadata.title,
+          nftName: payload.nftMetadata.name,
+          filename: mintRequest.filename,
+          contentType: this.detectContentType(mintRequest.filename),
+          fileDataLength: mintRequest.file.length,
+          hasCustomMetadata: !!mintRequest.metadata
         });
       }
 
@@ -184,7 +202,7 @@ export class APIClient {
           }
           : {};
 
-      const response: AxiosResponse = await this.client.post('/api/cli/mint-file', payload, config);
+      const response: AxiosResponse = await this.client.post('/api/prepare-mint', payload, config);
 
       if (this.config.verbose && mintRequest.file.length > 5 * 1024 * 1024) {
         process.stdout.write('\n');
@@ -283,6 +301,15 @@ export class APIClient {
 
       switch (status) {
         case 400:
+          if (this.config.verbose) {
+            console.log('Validation error details:', {
+              status: error.response.status,
+              statusText: error.response.statusText,
+              errorCode: data?.error?.code,
+              errorMessage: data?.error?.message,
+              errorDetails: JSON.stringify(data?.error?.details, null, 2)
+            });
+          }
           return new ValidationError(
             data?.error?.message || 'Invalid request parameters',
             'Check your input parameters and try again'
@@ -308,12 +335,13 @@ export class APIClient {
             console.log('Server error details:', {
               status: error.response.status,
               statusText: error.response.statusText,
-              data: error.response.data,
-              headers: error.response.headers
+              errorCode: data?.error?.code,
+              errorMessage: data?.error?.message,
+              errorDetails: JSON.stringify(data?.error?.details, null, 2)
             });
           }
           return new APIError(
-            'Server error',
+            data?.error?.message || 'Server error',
             status,
             'The API server encountered an error. Try again later.'
           );

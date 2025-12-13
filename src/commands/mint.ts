@@ -224,26 +224,61 @@ ${chalk.yellow.bold('TROUBLESHOOTING:')}
         const transactionSigner = new TransactionSigner();
         let signedTx;
 
+        // Prepare transaction data
+        let transactionData = {
+          to: result.transactionData?.to || '',
+          data: result.transactionData?.data || '0x',
+          value: result.transactionData?.value || '0',
+          gasEstimate: result.transactionData?.gasEstimate || 500000,
+        };
+
+        // If API returned empty transaction data, encode it using Story SDK
+        if (transactionData.data === '0x' && result.ipfsHash && result.transactionData?.to) {
+          try {
+            progress.update('🔧 Encoding transaction with Story SDK...');
+
+            // Connect wallet to initialize Story SDK
+            await transactionSigner.connectWallet({ privateKey: options.privateKey });
+
+            // Extract metadata hashes from result (these should come from API response)
+            // For now, use mock values since the API structure needs to be updated
+            const ipMetadataHash = 'mock-ip-hash';
+            const nftMetadataHash = 'mock-nft-hash';
+            const ipMetadataURI = `https://gateway.pinata.cloud/ipfs/${result.ipfsHash}`;
+            const nftMetadataURI = `https://gateway.pinata.cloud/ipfs/${result.ipfsHash}`;
+
+            const encodedTx = await transactionSigner.encodeStoryTransaction(
+              transactionData.to,
+              ipMetadataURI,
+              nftMetadataURI,
+              ipMetadataHash,
+              nftMetadataHash
+            );
+
+            transactionData = {
+              ...transactionData,
+              to: encodedTx.to,
+              data: encodedTx.data,
+              value: encodedTx.value,
+            };
+
+            if (isVerbose) {
+              progress.info(`Story SDK encoded transaction data: ${encodedTx.data.substring(0, 20)}...`);
+            }
+          } catch (error) {
+            if (isVerbose) {
+              progress.warn(`Story SDK encoding failed, using API data: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            }
+          }
+        }
+
         try {
           if (options.privateKey) {
             // Sign with provided private key
-            signedTx = await transactionSigner.signForDevelopment(
-              {
-                to: result.transactionData?.to || '',
-                data: result.transactionData?.data || '0x',
-                value: result.transactionData?.value || '0',
-                gasEstimate: result.transactionData?.gasEstimate || 500000,
-              },
-              options.privateKey
-            );
+            signedTx = await transactionSigner.signForDevelopment(transactionData, options.privateKey);
           } else if (process.env.STORYLITE_PRIVATE_KEY) {
             // Sign with environment variable (CI/CD)
-            signedTx = await transactionSigner.signForCICD({
-              to: result.transactionData?.to || '',
-              data: result.transactionData?.data || '0x',
-              value: result.transactionData?.value || '0',
-              gasEstimate: result.transactionData?.gasEstimate || 500000,
-            });
+            signedTx = await transactionSigner.signForCICD(transactionData);
           } else {
             // No signing method available
             progress.fail('✗ No signing method available');
