@@ -32,6 +32,13 @@ export interface MintResult {
   };
 }
 
+export interface SignedTransaction {
+  hash: string;
+  success: boolean;
+  error?: string;
+  ipAssetId?: string; // Add IP Asset ID to signed transaction result
+}
+
 export interface CLIConfig {
   endpoint: string;
   apiKey?: string;

@@ -333,11 +333,76 @@ export class TransactionSigner {
     }
 
     /**
-     * Sign transaction interactively (future implementation)
+     * Sign transaction interactively with user confirmation
      */
-    async signInteractively(_txRequest: TransactionRequest): Promise<SignedTransaction> {
-        // Future: Integrate with hardware wallets, WalletConnect, etc.
-        throw new Error('Interactive signing coming soon! Use --private-key for now.');
+    async signInteractively(txRequest: TransactionRequest): Promise<SignedTransaction> {
+        const readline = await import('readline');
+        const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout
+        });
+
+        try {
+            // Display transaction details
+            console.log('\n📋 Transaction Details:');
+            console.log(`   To: ${txRequest.to}`);
+            console.log(`   Data: ${txRequest.data.substring(0, 20)}...`);
+            console.log(`   Value: ${txRequest.value} ETH`);
+            console.log(`   Gas Estimate: ${txRequest.gasEstimate}`);
+
+            // Get stored private key or prompt for it
+            const privateKey = await this.getOrPromptPrivateKey(rl);
+
+            // Ask for confirmation
+            const confirmed = await this.promptConfirmation(rl);
+
+            if (!confirmed) {
+                return {
+                    hash: '',
+                    success: false,
+                    error: 'Transaction cancelled by user'
+                };
+            }
+
+            // Connect wallet and sign
+            await this.walletManager.connectWallet({ privateKey });
+            return await this.walletManager.signTransaction(txRequest);
+
+        } finally {
+            rl.close();
+        }
+    }
+
+    /**
+     * Get stored private key or prompt user to enter it
+     */
+    private async getOrPromptPrivateKey(rl: any): Promise<string> {
+        // Check if private key is stored (you could implement encrypted storage here)
+        const storedKey = process.env.STORYLITE_PRIVATE_KEY;
+
+        if (storedKey) {
+            console.log('🔑 Using stored private key');
+            return storedKey;
+        }
+
+        // Prompt for private key
+        return new Promise((resolve) => {
+            rl.question('🔑 Enter your private key (or set STORYLITE_PRIVATE_KEY env var): ', (answer: string) => {
+                resolve(answer.trim());
+            });
+        });
+    }
+
+    /**
+     * Prompt user for transaction confirmation
+     */
+    private async promptConfirmation(rl: any): Promise<boolean> {
+        return new Promise((resolve) => {
+            rl.question('\n❓ Do you want to sign and send this transaction? (y/N): ', (answer: string) => {
+                const confirmed = answer.toLowerCase().trim() === 'y' || answer.toLowerCase().trim() === 'yes';
+                resolve(confirmed);
+            });
+        });
     }
 
     /**

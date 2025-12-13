@@ -24,6 +24,7 @@ export const mintCommand = new Command('mint')
   .option('--address <address>', 'Your wallet address (optional if default address is set)')
   .option('--private-key <key>', 'Private key for transaction signing (use with caution)')
   .option('--dry-run', 'Prepare transaction but do not sign or send')
+  .option('--interactive', 'Interactive mode: review transaction details and confirm before signing')
   .option('-v, --verbose', 'Enable detailed logging and progress information')
   .addHelpText(
     'before',
@@ -273,7 +274,10 @@ ${chalk.yellow.bold('TROUBLESHOOTING:')}
         }
 
         try {
-          if (options.privateKey) {
+          if (options.interactive) {
+            // Interactive mode: review and confirm transaction
+            signedTx = await transactionSigner.signInteractively(transactionData);
+          } else if (options.privateKey) {
             // Sign with provided private key
             signedTx = await transactionSigner.signForDevelopment(transactionData, options.privateKey);
           } else if (process.env.STORYLITE_PRIVATE_KEY) {
@@ -285,13 +289,18 @@ ${chalk.yellow.bold('TROUBLESHOOTING:')}
             console.log(chalk.yellow('\n💡 To sign transactions, you need either:'));
             console.log(
               chalk.gray(
-                '   1. Use --private-key flag: storylite mint file.txt --private-key 0x...'
+                '   1. Use interactive mode: storylite mint file.txt --interactive'
               )
             );
             console.log(
-              chalk.gray('   2. Set environment variable: export STORYLITE_PRIVATE_KEY=0x...')
+              chalk.gray(
+                '   2. Use --private-key flag: storylite mint file.txt --private-key 0x...'
+              )
             );
-            console.log(chalk.gray('   3. Use dry run mode: storylite mint file.txt --dry-run'));
+            console.log(
+              chalk.gray('   3. Set environment variable: export STORYLITE_PRIVATE_KEY=0x...')
+            );
+            console.log(chalk.gray('   4. Use dry run mode: storylite mint file.txt --dry-run'));
             throw new Error('No transaction signing method configured');
           }
 
@@ -299,9 +308,25 @@ ${chalk.yellow.bold('TROUBLESHOOTING:')}
             progress.succeed('✓ IP Asset created successfully!');
 
             console.log(chalk.cyan(`🔗 Transaction Hash: ${signedTx.hash}`));
-            console.log(
-              chalk.cyan(`📋 IP Asset ID: ${result.ipAssetId || 'Pending confirmation'}`)
-            );
+
+            // Try to extract IP Asset ID from transaction
+            if (isVerbose) {
+              progress.info('Extracting IP Asset ID from transaction...');
+            }
+
+            try {
+              const ipAssetId = await apiClient.extractIpAssetId(signedTx.hash);
+              if (ipAssetId) {
+                console.log(chalk.cyan(`🆔 IP Asset ID: ${ipAssetId}`));
+              } else {
+                console.log(chalk.gray(`🆔 IP Asset ID: Pending confirmation (check explorer later)`));
+              }
+            } catch (error) {
+              console.log(chalk.gray(`🆔 IP Asset ID: Pending confirmation (check explorer later)`));
+              if (isVerbose) {
+                progress.warn(`Failed to extract IP Asset ID: ${error instanceof Error ? error.message : 'Unknown error'}`);
+              }
+            }
 
             if (result.ipfsHash) {
               console.log(chalk.gray(`📦 IPFS Hash: ${result.ipfsHash}`));

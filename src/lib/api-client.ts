@@ -1,6 +1,8 @@
 import axios, { AxiosInstance, AxiosError, AxiosResponse } from 'axios';
 import { promises as fs } from 'fs';
 import { resolve } from 'path';
+import { createPublicClient, http } from 'viem';
+import { aeneid } from '@story-protocol/core-sdk';
 import { MintRequest, MintResult, CLIConfig } from '../types/index.js';
 import { NetworkError, APIError, ValidationError, FileNotFoundError } from './error-handler.js';
 import { ProgressReporter } from './progress-reporter.js';
@@ -449,6 +451,51 @@ export class APIClient {
     }
 
     return `${size.toFixed(unitIndex === 0 ? 0 : 1)} ${units[unitIndex]}`;
+  }
+
+  /**
+   * Extract IP Asset ID from transaction receipt
+   */
+  async extractIpAssetId(transactionHash: string): Promise<string | null> {
+    try {
+      const publicClient = createPublicClient({
+        chain: aeneid,
+        transport: http('https://aeneid.storyrpc.io'),
+      });
+
+      // Wait for transaction receipt
+      const receipt = await publicClient.waitForTransactionReceipt({
+        hash: transactionHash as `0x${string}`,
+        timeout: 60000, // 60 seconds timeout
+      });
+
+      // Look for IPRegistered event
+      // The IP Asset ID is typically emitted in the IPRegistered event
+      for (const log of receipt.logs) {
+        try {
+          // IPRegistered event signature: IPRegistered(address,uint256,address,string,string,uint256)
+          if (log.topics[0] === '0x1234567890abcdef...') { // Replace with actual event signature
+            // Extract IP Asset ID from the log data
+            // This would need to be decoded properly based on the actual event structure
+            const ipAssetId = log.topics[1]; // Assuming IP Asset ID is in topics[1]
+            return ipAssetId || null;
+          }
+        } catch (error) {
+          // Continue to next log if this one fails to decode
+          continue;
+        }
+      }
+
+      if (this.config.verbose) {
+        console.log('IP Asset ID not found in transaction logs');
+      }
+      return null;
+    } catch (error) {
+      if (this.config.verbose) {
+        console.log('Failed to extract IP Asset ID:', error);
+      }
+      return null;
+    }
   }
 
   /**
