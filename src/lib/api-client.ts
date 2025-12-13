@@ -145,13 +145,15 @@ export class APIClient {
         ipMetadata: {
           title: mintRequest.title || mintRequest.filename,
           description: mintRequest.description || `IP asset for ${mintRequest.filename}`,
-          creators: [{
-            name: `User-${userAddress.slice(2, 8)}...${userAddress.slice(-4)}`,
-            address: userAddress,
-            contributionPercent: 100
-          }],
+          creators: [
+            {
+              name: `User-${userAddress.slice(2, 8)}...${userAddress.slice(-4)}`,
+              address: userAddress,
+              contributionPercent: 100,
+            },
+          ],
           createdAt: new Date().toISOString(),
-          mediaType: this.detectContentType(mintRequest.filename)
+          mediaType: this.detectContentType(mintRequest.filename),
         },
         nftMetadata: {
           name: mintRequest.title || mintRequest.filename,
@@ -159,8 +161,8 @@ export class APIClient {
           attributes: [
             { key: 'File Name', value: mintRequest.filename },
             { key: 'File Size', value: this.formatFileSize(mintRequest.file.length) },
-            { key: 'Content Type', value: this.detectContentType(mintRequest.filename) }
-          ]
+            { key: 'Content Type', value: this.detectContentType(mintRequest.filename) },
+          ],
         },
         // Note: File upload temporarily disabled - API may not have IPFS configured
         // files: [{
@@ -180,7 +182,7 @@ export class APIClient {
           filename: mintRequest.filename,
           contentType: this.detectContentType(mintRequest.filename),
           fileDataLength: mintRequest.file.length,
-          hasCustomMetadata: !!mintRequest.metadata
+          hasCustomMetadata: !!mintRequest.metadata,
         });
       }
 
@@ -194,14 +196,14 @@ export class APIClient {
       const config =
         mintRequest.file.length > 5 * 1024 * 1024
           ? {
-            // 5MB threshold
-            onUploadProgress: (progressEvent: any) => {
-              if (this.config.verbose && progressEvent.total) {
-                const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
-                process.stdout.write(`\rUploading: ${progress}%`);
-              }
-            },
-          }
+              // 5MB threshold
+              onUploadProgress: (progressEvent: any) => {
+                if (this.config.verbose && progressEvent.total) {
+                  const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+                  process.stdout.write(`\rUploading: ${progress}%`);
+                }
+              },
+            }
           : {};
 
       const response: AxiosResponse = await this.client.post('/api/prepare-mint', payload, config);
@@ -309,7 +311,7 @@ export class APIClient {
               statusText: error.response.statusText,
               errorCode: data?.error?.code,
               errorMessage: data?.error?.message,
-              errorDetails: JSON.stringify(data?.error?.details, null, 2)
+              errorDetails: JSON.stringify(data?.error?.details, null, 2),
             });
           }
           return new ValidationError(
@@ -339,7 +341,7 @@ export class APIClient {
               statusText: error.response.statusText,
               errorCode: data?.error?.code,
               errorMessage: data?.error?.message,
-              errorDetails: JSON.stringify(data?.error?.details, null, 2)
+              errorDetails: JSON.stringify(data?.error?.details, null, 2),
             });
           }
           return new APIError(
@@ -480,7 +482,9 @@ export class APIClient {
         try {
           // Transfer event signature: Transfer(address,address,uint256)
           // keccak256("Transfer(address,address,uint256)") = 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef
-          if (log.topics[0] === '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef') {
+          if (
+            log.topics[0] === '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
+          ) {
             const tokenId = log.topics[3]; // Token ID is in topics[3] for Transfer event
             const contractAddress = log.address;
 
@@ -490,7 +494,9 @@ export class APIClient {
               const ipAssetId = `${contractAddress.toLowerCase()}-${BigInt(tokenId).toString()}`;
 
               if (this.config.verbose) {
-                console.log(`Found NFT Transfer: Contract ${contractAddress}, Token ID ${BigInt(tokenId).toString()}`);
+                console.log(
+                  `Found NFT Transfer: Contract ${contractAddress}, Token ID ${BigInt(tokenId).toString()}`
+                );
               }
 
               return ipAssetId;

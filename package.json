@@ -1,7 +1,7 @@
 {
     "name": "storylite-cli",
-    "version": "1.0.6",
-    "description": "The cURL for Intellectual Property - Transform any file into a registered IP asset with one command",
+    "version": "1.0.10",
+    "description": "The cURL for Intellectual Property - Transform any file into a registered IP asset with one command. Features real blockchain transactions, IP Asset ID extraction, interactive confirmation mode, and comprehensive environment setup.",
     "type": "module",
     "main": "dist/index.js",
     "bin": {

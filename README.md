@@ -10,6 +10,7 @@ A streamlined command-line tool for minting intellectual property assets through
 
 ## ✨ Features
 
+### 🎯 **Core Features**
 - 🚀 **One-command minting** - Transform files to IP assets instantly
 - 🔐 **Built-in wallet management** - No external wallet required
 - 📁 **Universal file support** - Code, images, documents, audio, video
@@ -17,6 +18,14 @@ A streamlined command-line tool for minting intellectual property assets through
 - 🔧 **Developer-friendly** - Perfect for CI/CD pipelines
 - 🎨 **Beautiful output** - Clean, colorful terminal interface
 - ⚡ **Lightning fast** - Optimized for speed and reliability
+
+### 🆕 **New in v1.0.10**
+- 🔧 **Interactive Setup Wizard** - Get started in 60 seconds with `storylite init`
+- 🔐 **Interactive Transaction Mode** - Review and confirm before signing with `--interactive`
+- 🆔 **Real IP Asset ID Extraction** - Get actual blockchain identifiers, not just hashes
+- 🌐 **Environment Variable Support** - Secure private key storage with `STORYLITE_PRIVATE_KEY`
+- 📋 **Enhanced Configuration** - Environment detection and smart defaults
+- 🎯 **Improved UX** - Context-aware help and better error messages
 
 ## 🚀 Quick Start
 
@@ -29,17 +38,17 @@ npm install -g storylite-cli
 ### 30-Second Setup
 
 ```bash
-# 1. Set your API endpoint
-storylite config set-endpoint https://surreal-base.vercel.app
+# 1. Interactive setup wizard (recommended)
+storylite init --address 0x742d35Cc6634C0532925a3b8D404d3aABb8c4532 --yes
 
-# 2. Set your wallet address (one time only!)
-storylite config set-address 0x742d35Cc6634C0532925a3b8D404d3aABb8c4532
+# 2. Set up secure environment (optional but recommended)
+export STORYLITE_PRIVATE_KEY=0x...
 
-# 3. Start minting! 🎉
-storylite mint ./my-awesome-file.txt
+# 3. Start minting with interactive confirmation! 🎉
+storylite mint ./my-awesome-file.txt --interactive
 ```
 
-That's it! No more typing wallet addresses ever again.
+**New in v1.0.10:** Interactive setup wizard, environment variable support, and transaction confirmation mode!
 
 ## 📖 Usage
 
@@ -47,44 +56,69 @@ That's it! No more typing wallet addresses ever again.
 
 | Command | Description | Example |
 |---------|-------------|---------|
-| `mint <file>` | Transform any file into an IP asset | `storylite mint ./code.js` |
-| `config set-endpoint <url>` | Set your API endpoint | `storylite config set-endpoint https://api.com` |
+| `init` | **Interactive setup wizard** - Get started in 60 seconds | `storylite init` |
+| `mint <file>` | Transform any file into an IP asset | `storylite mint ./code.js --interactive` |
+| `config set-endpoint <url>` | Set your API endpoint | `storylite config set-endpoint https://surreal-base.vercel.app` |
 | `config set-address <address>` | Set default wallet address | `storylite config set-address 0x742d35...` |
 | `config show` | View current configuration | `storylite config show` |
 
 ### Real-World Examples
 
 ```bash
-# 🎨 Mint digital artwork
-storylite mint ./my-nft.png --title "Cosmic Dreams" --description "AI-generated space art"
+# 🚀 Interactive setup (NEW in v1.0.10)
+storylite init --address 0x742d35... --yes
+
+# 🔐 Interactive minting with confirmation (NEW)
+storylite mint ./my-nft.png --interactive --title "Cosmic Dreams"
+
+# 🎨 Mint digital artwork with private key
+storylite mint ./my-nft.png --private-key 0x... --title "Cosmic Dreams" --description "AI-generated space art"
 
 # 💻 Protect your source code
-storylite mint ./algorithm.py --title "ML Trading Bot"
+storylite mint ./algorithm.py --interactive --title "ML Trading Bot"
 
 # 📄 Register important documents
-storylite mint ./whitepaper.pdf --title "Revolutionary Protocol"
+storylite mint ./whitepaper.pdf --private-key 0x... --title "Revolutionary Protocol"
 
-# 🎵 Mint audio files
-storylite mint ./beat.mp3 --title "Lo-Fi Summer Vibes"
+# 🎵 Mint audio files with environment variable
+export STORYLITE_PRIVATE_KEY=0x...
+storylite mint ./beat.mp3 --interactive --title "Lo-Fi Summer Vibes"
 
 # 🎬 Register video content
-storylite mint ./demo.mp4 --title "Product Demo Video"
+storylite mint ./demo.mp4 --interactive --title "Product Demo Video"
+
+# 🆔 Get real IP Asset ID (NEW in v1.0.10)
+# Output includes: IP Asset ID: 0xc32a8a0ff3beddda58393d022af433e78739fabc-3929
 ```
 
 ### Advanced Usage
 
 ```bash
-# Override default address for specific mint
-storylite mint ./file.txt --address 0x9876543210...
+# 🔧 Interactive setup wizard
+storylite init                                    # Full interactive setup
+storylite init --address 0x... --yes            # Quick setup with defaults
 
-# Use custom API endpoint
+# 🔐 Interactive transaction confirmation (NEW)
+storylite mint ./file.txt --interactive          # Review before signing
+
+# 🚀 Direct signing modes
+storylite mint ./file.txt --private-key 0x...    # Direct private key
+export STORYLITE_PRIVATE_KEY=0x...               # Environment variable
+storylite mint ./file.txt --interactive          # Use stored key with confirmation
+
+# 🔍 Debugging and testing
+storylite mint ./file.txt --verbose              # Detailed logging
+storylite mint ./file.txt --dry-run              # Prepare but don't send
+
+# 🌐 Custom endpoints
 storylite mint ./file.txt --endpoint https://my-custom-api.com
 
-# Verbose mode for debugging
-storylite mint ./file.txt --verbose
+# 📊 View configuration and environment
+storylite config show                            # Shows env variables too
 
-# Batch minting (run multiple commands)
-storylite mint ./file1.txt && storylite mint ./file2.jpg && storylite mint ./file3.pdf
+# 🔄 Batch minting with environment setup
+export STORYLITE_PRIVATE_KEY=0x...
+storylite mint ./file1.txt --interactive && storylite mint ./file2.jpg --interactive
 ```
 
 ## 📁 Supported File Types
@@ -128,6 +162,21 @@ storylite mint ./file1.txt && storylite mint ./file2.jpg && storylite mint ./fil
 
 ### First-Time Setup
 
+#### 🔧 **Option 1: Interactive Setup Wizard (Recommended)**
+
+```bash
+# One command setup - guides you through everything
+storylite init --address 0x742d35Cc6634C0532925a3b8D404d3aABb8c4532 --yes
+
+# Set up secure environment (optional but recommended)
+export STORYLITE_PRIVATE_KEY=0x...
+
+# You're ready to mint!
+storylite mint ./myfile.txt --interactive
+```
+
+#### ⚙️ **Option 2: Manual Setup**
+
 ```bash
 # Check if everything is working
 storylite --help
@@ -153,14 +202,41 @@ storylite config show
 | **Address** | `set-address <address>` | Your wallet address | ✅ Yes |
 | **API Key** | `set-key <key>` | Authentication key | ❌ Optional |
 
-### Environment Variables
+### Environment Variables (New in v1.0.10)
 
 ```bash
-# Enable verbose mode globally
+# 🔐 Private Key (Enables interactive mode)
+export STORYLITE_PRIVATE_KEY=0x2d0b3c7d8cf92649839f607e42d3bc23fd28d7cb0739fa4cba74b3b4d2c50550
+
+# 🌐 Custom Endpoint Override
+export STORYLITE_ENDPOINT=https://your-custom-api.com
+
+# 📝 Enable Verbose Logging
 export STORYLITE_VERBOSE=true
 
-# Use custom config location
+# 📁 Custom Config Location
 export STORYLITE_CONFIG_DIR=/path/to/config
+```
+
+#### 🔐 **Secure Transaction Signing Options**
+
+| Method | Security | Convenience | Best For |
+|--------|----------|-------------|----------|
+| `--interactive` | ✅ High | ✅ High | **Recommended** - Review before signing |
+| `--private-key 0x...` | ⚠️ Medium | ✅ High | Quick testing, CI/CD |
+| Environment variable | ✅ High | ✅ High | Production, repeated use |
+
+**Interactive Mode Example:**
+```bash
+export STORYLITE_PRIVATE_KEY=0x...
+storylite mint ./file.txt --interactive
+
+# Shows transaction details and asks for confirmation:
+# 📋 Transaction Details:
+#    To: 0xbe39E1C756e921BD25DF86e7AAa31106d1eb0424
+#    Data: 0xf1c42a22...
+#    Gas Estimate: 1137427
+# ❓ Do you want to sign and send this transaction? (y/N): y
 ```
 
 ## 🎯 Use Cases
@@ -192,14 +268,35 @@ storylite mint ./tutorial.mp4 --title "How to Build Apps"
 ### For Businesses
 ```bash
 # Protect proprietary documents
-storylite mint ./business-plan.pdf --title "Q4 Strategy Document"
+storylite mint ./business-plan.pdf --interactive --title "Q4 Strategy Document"
 
 # Register brand assets
-storylite mint ./logo.svg --title "Company Logo 2024"
+storylite mint ./logo.svg --interactive --title "Company Logo 2024"
 
 # Mint product designs
-storylite mint ./product-spec.pdf --title "Product Requirements v3.0"
+storylite mint ./product-spec.pdf --interactive --title "Product Requirements v3.0"
 ```
+
+## 🆔 **IP Asset ID Extraction (New in v1.0.10)**
+
+StoryLite CLI now extracts and displays the **real IP Asset ID** from blockchain transactions:
+
+```bash
+storylite mint ./myfile.txt --interactive --title "My IP Asset"
+
+# Output includes real blockchain identifiers:
+✓ IP Asset created successfully!
+🔗 Transaction Hash: 0xc4578e2bf3fb90dafdb1443f3c47c2889920f9dfa21d871d209cdda3a74712a5
+🆔 IP Asset ID: 0xc32a8a0ff3beddda58393d022af433e78739fabc-3929
+📦 IPFS Hash: QmZM3KmPAYssc4TihpGTNS1zaZkk9sGm1tbjLh3m5XksgY
+🔍 View on explorer: https://aeneid.storyscan.io/tx/0x...
+```
+
+**What you get:**
+- **🔗 Transaction Hash**: Blockchain transaction confirmation
+- **🆔 IP Asset ID**: Unique identifier for your IP asset (use for licensing, derivatives, etc.)
+- **📦 IPFS Hash**: Decentralized storage location
+- **🔍 Explorer Link**: View transaction details on blockchain explorer
 
 ## 🚀 CI/CD Integration
 

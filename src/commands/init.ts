@@ -82,8 +82,8 @@ ${chalk.yellow.bold('NEED HELP?')}
 
             console.log(
               chalk.cyan('1.') +
-              ' Surreal Base (recommended): ' +
-              chalk.white('https://surreal-base.vercel.app')
+                ' Surreal Base (recommended): ' +
+                chalk.white('https://surreal-base.vercel.app')
             );
             console.log(
               chalk.cyan('2.') + ' Local development: ' + chalk.white('http://localhost:3000')
@@ -208,7 +208,7 @@ ${chalk.yellow.bold('NEED HELP?')}
         const envStatus = {
           privateKey: !!process.env.STORYLITE_PRIVATE_KEY,
           endpoint: !!process.env.STORYLITE_ENDPOINT,
-          verbose: !!process.env.STORYLITE_VERBOSE
+          verbose: !!process.env.STORYLITE_VERBOSE,
         };
 
         if (envStatus.privateKey || envStatus.endpoint || envStatus.verbose) {

@@ -24,7 +24,10 @@ export const mintCommand = new Command('mint')
   .option('--address <address>', 'Your wallet address (optional if default address is set)')
   .option('--private-key <key>', 'Private key for transaction signing (use with caution)')
   .option('--dry-run', 'Prepare transaction but do not sign or send')
-  .option('--interactive', 'Interactive mode: review transaction details and confirm before signing')
+  .option(
+    '--interactive',
+    'Interactive mode: review transaction details and confirm before signing'
+  )
   .option('-v, --verbose', 'Enable detailed logging and progress information')
   .addHelpText(
     'before',
@@ -264,11 +267,15 @@ ${chalk.yellow.bold('TROUBLESHOOTING:')}
             };
 
             if (isVerbose) {
-              progress.info(`Story SDK encoded transaction data: ${encodedTx.data.substring(0, 20)}...`);
+              progress.info(
+                `Story SDK encoded transaction data: ${encodedTx.data.substring(0, 20)}...`
+              );
             }
           } catch (error) {
             if (isVerbose) {
-              progress.warn(`Story SDK encoding failed, using API data: ${error instanceof Error ? error.message : 'Unknown error'}`);
+              progress.warn(
+                `Story SDK encoding failed, using API data: ${error instanceof Error ? error.message : 'Unknown error'}`
+              );
             }
           }
         }
@@ -279,7 +286,10 @@ ${chalk.yellow.bold('TROUBLESHOOTING:')}
             signedTx = await transactionSigner.signInteractively(transactionData);
           } else if (options.privateKey) {
             // Sign with provided private key
-            signedTx = await transactionSigner.signForDevelopment(transactionData, options.privateKey);
+            signedTx = await transactionSigner.signForDevelopment(
+              transactionData,
+              options.privateKey
+            );
           } else if (process.env.STORYLITE_PRIVATE_KEY) {
             // Sign with environment variable (CI/CD)
             signedTx = await transactionSigner.signForCICD(transactionData);
@@ -288,9 +298,7 @@ ${chalk.yellow.bold('TROUBLESHOOTING:')}
             progress.fail('✗ No signing method available');
             console.log(chalk.yellow('\n💡 To sign transactions, you need either:'));
             console.log(
-              chalk.gray(
-                '   1. Use interactive mode: storylite mint file.txt --interactive'
-              )
+              chalk.gray('   1. Use interactive mode: storylite mint file.txt --interactive')
             );
             console.log(
               chalk.gray(
@@ -319,12 +327,18 @@ ${chalk.yellow.bold('TROUBLESHOOTING:')}
               if (ipAssetId) {
                 console.log(chalk.cyan(`🆔 IP Asset ID: ${ipAssetId}`));
               } else {
-                console.log(chalk.gray(`🆔 IP Asset ID: Pending confirmation (check explorer later)`));
+                console.log(
+                  chalk.gray(`🆔 IP Asset ID: Pending confirmation (check explorer later)`)
+                );
               }
             } catch (error) {
-              console.log(chalk.gray(`🆔 IP Asset ID: Pending confirmation (check explorer later)`));
+              console.log(
+                chalk.gray(`🆔 IP Asset ID: Pending confirmation (check explorer later)`)
+              );
               if (isVerbose) {
-                progress.warn(`Failed to extract IP Asset ID: ${error instanceof Error ? error.message : 'Unknown error'}`);
+                progress.warn(
+                  `Failed to extract IP Asset ID: ${error instanceof Error ? error.message : 'Unknown error'}`
+                );
               }
             }
 
